@@ -26,7 +26,7 @@ public class MovieCollection extends MonsterMovie {
         Scanner scanner = new Scanner(System.in);
 
         try {
-            System.out.println("Enter movie title you want the new character in:");
+            System.out.print("Enter movie title you want the new character in: ");
             String enteredTitle = scanner.nextLine();
 
             System.out.print("Enter the number of horror characters: ");
@@ -61,7 +61,7 @@ public class MovieCollection extends MonsterMovie {
                 }
             }
             if (!movieFound) {
-                System.out.println("Movie with title \"" + enteredTitle + "\" not found.");
+                System.out.println("Movie with title \"" + enteredTitle + "\" not found.\n");
             }
         } catch (InputMismatchException e) {
             System.err.println("Invalid input format. Please enter numbers where required.");
@@ -81,7 +81,7 @@ public class MovieCollection extends MonsterMovie {
             scanner.nextLine();
 
             for (int i = 0; i < numberOfMovies; i++) {
-                System.out.print("Enter movie title " + (i + 1) + " (don't use more than a word): ");
+                System.out.print("Enter movie title " + (i + 1) + ": ");
                 String title = scanner.nextLine();
 
                 System.out.print("Enter year released: ");
@@ -125,27 +125,25 @@ public class MovieCollection extends MonsterMovie {
         }
     }
 
-    public void removeMovieByTitle(String title) {
-        if (title == null || title.isEmpty()) {
+    public void removeMovieByTitle(String newTitle) {
+        if (newTitle.isEmpty()) {
             System.err.println("Error: Title cannot be null or empty.");
             return;
         }
-
-        movies.removeIf(movie -> movie.getTitle().equalsIgnoreCase(title));
+        movies.removeIf(movie -> movie.getTitle().toLowerCase().contains(newTitle.toLowerCase()));
     }
 
-    public void removeMovieByYear(int year) {
-        movies.removeIf(movie -> movie.getYearReleased() == year);
+    public void removeMovieByYear(int newYearReleased) {
+        movies.removeIf(movie -> movie.getYearReleased() == newYearReleased);
     }
 
-    public void removeMovieByCharacter(String name) {
-        if (name == null || name.isEmpty()) {
+    public void removeMovieByCharacter(String newName) {
+        if (newName.isEmpty()) {
             System.err.println("Error: Character name cannot be null or empty.");
             return;
         }
-
         try {
-            movies.removeIf(movie -> movie.getHorrorCharacters().removeIf(character -> character.getName().equalsIgnoreCase(name)));
+            movies.removeIf(movie -> movie.getHorrorCharacters().removeIf(character -> character.getName().equalsIgnoreCase(newName)));
         } catch (Exception e) {
             System.err.println("An error occurred while removing movies by character: " + e.getMessage());
             e.printStackTrace();
@@ -155,14 +153,12 @@ public class MovieCollection extends MonsterMovie {
     public void saveMovie(String fileName) throws IOException {
         try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(fileName))) {
             for (MonsterMovie movie : movies) {
-                bufferedWriter.write(movie.getTitle() + ", " + movie.getYearReleased());
                 for (HorrorCharacter character : movie.getHorrorCharacters()) {
-                    bufferedWriter.write(", " + character.getName() + ", " + character.getAge() +
+                    bufferedWriter.write(movie.getTitle() + ", " + movie.getYearReleased() + ", " + character.getName() + ", " + character.getAge() +
                             ", " + character.getSubtype() + ", " + character.getRebirth() + ", " + character.getVulnerability());
-                    bufferedWriter.newLine();
+                    bufferedWriter.append("\n");
                 }
             }
-            bufferedWriter.newLine();
         } catch (IOException e) {
             System.err.println("Error saving movie collection to file: " + e.getMessage());
             throw e;
@@ -175,30 +171,33 @@ public class MovieCollection extends MonsterMovie {
 
             while ((line = bufferedReader.readLine()) != null) {
                 String[] objects = line.split(", ");
-
                 if (objects.length == 7) {
-                    try {
-                        String title = objects[0];
-                        int yearReleased = Integer.parseInt(objects[1]);
-                        String name = objects[2];
-                        int age = Integer.parseInt(objects[3]);
-                        String subtype = objects[4];
-                        int rebirth = Integer.parseInt(objects[5]);
-                        String vulnerability = objects[6];
+                    String title = objects[0];
+                    int yearReleased = Integer.parseInt(objects[1]);
+                    String name = objects[2];
+                    int age = Integer.parseInt(objects[3]);
+                    String subtype = objects[4];
+                    int rebirth = Integer.parseInt(objects[5]);
+                    String vulnerability = objects[6];
 
-                        MonsterMovie movie = new MonsterMovie(title, yearReleased);
-                        movie.addCharacter(new HorrorCharacter(name, age, subtype, rebirth, vulnerability));
-                        addMovie(movie);
-                    } catch (NumberFormatException e) {
-                        System.err.println("Invalid number format in line: " + line);
-                    }
-                } else {
-                    System.out.println("Skipping invalid line: " + line);
+                    MonsterMovie movie = findOrCreateMovie(title, yearReleased);
+                    movie.addCharacter(new HorrorCharacter(name, age, subtype, rebirth, vulnerability));
                 }
             }
         } catch (IOException e) {
             System.err.println("Error reading from file: " + e.getMessage());
             throw e;
         }
+    }
+
+    private MonsterMovie findOrCreateMovie(String title, int yearReleased) {
+        for (MonsterMovie movie : movies) {
+            if (movie.getTitle().equalsIgnoreCase(title)) {
+                return movie;
+            }
+        }
+        MonsterMovie newMovie = new MonsterMovie(title, yearReleased);
+        addMovie(newMovie);
+        return newMovie;
     }
 }

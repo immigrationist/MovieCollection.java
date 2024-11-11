@@ -53,7 +53,7 @@ public class MonsterMovie {
     public void displayCharactersInMovie() {
         try {
             Collections.sort(characters);
-            System.out.println("Sorted Horror Characters in Movie: " + title);
+            System.out.println("\nSorted Horror Characters in Movie: " + title);
             for (HorrorCharacter character : characters) {
                 System.out.println(character);
             }
@@ -65,7 +65,7 @@ public class MonsterMovie {
 
     public void displayCharacterTypeCount() {
         try {
-            System.out.println("Character types and counts: ");
+            System.out.println("\nCharacter types and counts: ");
             for (Map.Entry<String, Integer> e : subtypeCount.entrySet()) {
                 System.out.println(e.getKey() + " " + e.getValue());
             }
@@ -91,7 +91,7 @@ public class MonsterMovie {
             if (maxCount > 1) {
                 System.out.println(mostCommonVulnerability);
             } else {
-                System.out.println("No common vulnerability found!!!\n");
+                System.out.println("No common vulnerability found!!!");
             }
         } catch (Exception e) {
             System.err.println("An error occurred while finding the most common vulnerability: " + e.getMessage());

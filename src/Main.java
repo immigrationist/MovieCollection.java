@@ -17,7 +17,7 @@ public class Main {
         }
 
         while (choice != 7) {
-            System.out.println("Choose from the options below" +
+            System.out.println("\nChoose from the options below" +
                     "\n1. Create a new movie" +
                     "\n2. Add a new character to a movie" +
                     "\n3. Remove movie by year" +
@@ -28,6 +28,7 @@ public class Main {
 
             try {
                 choice = scanner.nextInt();
+                scanner.nextLine();
 
                 switch (choice) {
                     case 1:
@@ -47,7 +48,7 @@ public class Main {
                         break;
                     case 4:
                         System.out.print("Enter the movie name you want to delete: ");
-                        String title = scanner.next();
+                        String title = scanner.nextLine();
                         collection.removeMovieByTitle(title);
                         System.out.println("After removing movies from the title entered:");
                         collection.displayAllMovies();
@@ -79,7 +80,7 @@ public class Main {
                 }
             } catch (InputMismatchException e) {
                 System.err.println("Invalid input. Please enter a number (1-7).");
-                scanner.nextLine(); // clear invalid input
+                scanner.next();
             } catch (Exception e) {
                 System.err.println("An unexpected error occurred: " + e.getMessage());
                 e.printStackTrace();
