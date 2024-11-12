@@ -160,13 +160,16 @@ public class MovieCollection extends MonsterMovie {
 
     public void saveMovie(String fileName) throws IOException {
         try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(fileName))) {
+            bufferedWriter.write("Title || Year Released || Name || Age || Subtype || Rebirth || Vulnerability\n\n");
             for (MonsterMovie movie : movies) {
                 for (HorrorCharacter character : movie.getHorrorCharacters()) {
-                    bufferedWriter.write(movie.getTitle() + ", " + movie.getYearReleased() + ", " + character.getName() + ", " + character.getAge() +
-                            ", " + character.getSubtype() + ", " + character.getRebirth() + ", " + character.getVulnerability());
+                    bufferedWriter.write(movie.getTitle() + " || " + movie.getYearReleased() + " || " + character.getName() + " || " + character.getAge() +
+                            " || " + character.getSubtype() + " || " + character.getRebirth() + " || " + character.getVulnerability());
                     bufferedWriter.append("\n");
                 }
+                bufferedWriter.append("\n");
             }
+
         } catch (IOException e) {
             System.err.println("Error saving movie collection to file: " + e.getMessage());
             throw e;
@@ -176,9 +179,11 @@ public class MovieCollection extends MonsterMovie {
     public void readFromFile(String fileName) throws IOException {
         try (BufferedReader bufferedReader = new BufferedReader(new FileReader(fileName))) {
             String line;
+            bufferedReader.readLine();
+            bufferedReader.readLine();
 
             while ((line = bufferedReader.readLine()) != null) {
-                String[] objects = line.split(", ");
+                String[] objects = line.split(" \\|\\| ");
                 if (objects.length == 7) {
                     String title = objects[0];
                     int yearReleased = Integer.parseInt(objects[1]);
