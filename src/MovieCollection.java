@@ -42,11 +42,12 @@ public class MovieCollection extends MonsterMovie {
                         System.out.print("Name: ");
                         String name = scanner.nextLine();
 
-                        System.out.print("Subtype: ");
-                        String subtype = scanner.nextLine();
-
                         System.out.print("Age: ");
                         int age = scanner.nextInt();
+                        scanner.nextLine();
+
+                        System.out.print("Subtype: ");
+                        String subtype = scanner.nextLine();
 
                         System.out.print("Rebirth year: ");
                         int rebirth = scanner.nextInt();
@@ -130,7 +131,7 @@ public class MovieCollection extends MonsterMovie {
             System.err.println("Error: Title cannot be null or empty.");
             return;
         }
-        movies.removeIf(movie -> movie.getTitle().toLowerCase().contains(newTitle.toLowerCase()));
+        movies.removeIf(movie -> movie.getTitle().contains(newTitle));
     }
 
     public void removeMovieByYear(int newYearReleased) {
@@ -143,7 +144,14 @@ public class MovieCollection extends MonsterMovie {
             return;
         }
         try {
-            movies.removeIf(movie -> movie.getHorrorCharacters().removeIf(character -> character.getName().equalsIgnoreCase(newName)));
+               for(MonsterMovie movie : movies) {
+                   for(HorrorCharacter character : movie.getHorrorCharacters()){
+                       if(character.getName().equals(newName)){
+                           movies.remove(movie);
+                           removeMovieByCharacter(character.getName());
+                       }
+                   }
+               }
         } catch (Exception e) {
             System.err.println("An error occurred while removing movies by character: " + e.getMessage());
             e.printStackTrace();
