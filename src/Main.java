@@ -16,7 +16,7 @@ public class Main {
             e.printStackTrace();
         }
 
-        while (choice != 7) {
+        while (choice != 8) {
             System.out.println("\nChoose from the options below" +
                     "\n1. Create a new movie" +
                     "\n2. Add a new character to a movie" +
@@ -24,8 +24,8 @@ public class Main {
                     "\n4. Remove movie by title" +
                     "\n5. Remove movie by character name" +
                     "\n6. Display all movies" +
-                    "\n7. Save & Exit");
-
+                    "\n7. Remove character inside a movie" +
+                    "\n8. Save & Exit");
             try {
                 choice = scanner.nextInt();
                 scanner.nextLine();
@@ -40,23 +40,17 @@ public class Main {
                         collection.displayCharacters();
                         break;
                     case 3:
-                        System.out.println("Enter a year to delete the movies made in that year:");
-                        int year = scanner.nextInt();
-                        collection.removeMovieByYear(year);
+                        collection.removeMovieByYear();
                         System.out.println("\nAfter removing movies from the year entered:");
                         collection.displayAllMovies();
                         break;
                     case 4:
-                        System.out.print("Enter the movie name you want to delete: ");
-                        String title = scanner.nextLine();
-                        collection.removeMovieByTitle(title);
+                        collection.removeMovieByTitle();
                         System.out.println("After removing movies from the title entered:");
                         collection.displayAllMovies();
                         break;
                     case 5:
-                        System.out.println("Enter the character name to delete the movies that contain:");
-                        String characterName = scanner.next();
-                        collection.removeMovieByCharacter(characterName);
+                        collection.removeMovieByCharacter();
                         System.out.println("After removing movies from the character entered:");
                         collection.displayAllMovies();
                         break;
@@ -65,6 +59,11 @@ public class Main {
                         collection.displayCharacters();
                         break;
                     case 7:
+                        collection.removeCharacterInAMovie();
+                        System.out.println("After removing character from movie: ");
+                        collection.displayCharacters();
+                        break;
+                    case 8:
                         try {
                             collection.saveMovie("/Users/berk/Documents/JAVA 2024/Assignment4/src/SavedMovie");
                         } catch (IOException e) {

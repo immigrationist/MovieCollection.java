@@ -4,7 +4,6 @@ public class MonsterMovie {
     private String title;
     private int yearReleased;
 
-    public final List<MonsterMovie> movies = new ArrayList<>();
     private final List<HorrorCharacter> characters;
     private final Map<String, Integer> subtypeCount;
     private final Map<String, Integer> commonVulnerabilities;
@@ -30,7 +29,6 @@ public class MonsterMovie {
         }
         try {
             characters.add(character);
-
             String subtype = character.getSubtype();
             if (subtype != null) {
                 subtypeCount.put(subtype, subtypeCount.getOrDefault(subtype, 0) + 1);
@@ -46,6 +44,25 @@ public class MonsterMovie {
             }
         } catch (Exception e) {
             System.err.println("An error occurred while adding the character: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    public void removeCharacter(HorrorCharacter character) {
+        if (character == null) {
+            System.err.println("Error: Null character cannot be removed.");
+            return;
+        }
+        try{
+            characters.remove(character);
+            characters.remove(character.getAge());
+            characters.remove(character.getRebirth());
+            characters.remove(character.getRebirth());
+            characters.remove(character.getVulnerability());
+
+        }
+        catch(Exception e){
+            System.err.println("An error occurred while removing the character: " + e.getMessage());
             e.printStackTrace();
         }
     }
@@ -66,8 +83,8 @@ public class MonsterMovie {
     public void displayCharacterTypeCount() {
         try {
             System.out.println("\nCharacter types and counts: ");
-            for (Map.Entry<String, Integer> e : subtypeCount.entrySet()) {
-                System.out.println(e.getKey() + " " + e.getValue());
+            for (Map.Entry<String, Integer> subtypeName : subtypeCount.entrySet()) {
+                System.out.println(subtypeName.getKey() + " " + subtypeName.getValue());
             }
         } catch (Exception e) {
             System.err.println("An error occurred while displaying character type counts: " + e.getMessage());
@@ -76,18 +93,16 @@ public class MonsterMovie {
     }
 
     public void displayMostCommonVulnerability() {
-        System.out.println("\nMost common Vulnerability: ");
+        System.out.println("Most common Vulnerability: ");
         String mostCommonVulnerability = null;
         int maxCount = 0;
-
         try {
-            for (Map.Entry<String, Integer> entry : commonVulnerabilities.entrySet()) {
-                if (entry.getValue() > maxCount) {
-                    mostCommonVulnerability = entry.getKey();
-                    maxCount = entry.getValue();
+            for (Map.Entry<String, Integer> commonVulnerability : commonVulnerabilities.entrySet()) {
+                if (commonVulnerability.getValue() > maxCount) {
+                    mostCommonVulnerability = commonVulnerability.getKey();
+                    maxCount = commonVulnerability.getValue();
                 }
             }
-
             if (maxCount > 1) {
                 System.out.println(mostCommonVulnerability);
             } else {
@@ -108,6 +123,7 @@ public class MonsterMovie {
     }
 
     public List<HorrorCharacter> getHorrorCharacters() {
-        return Collections.unmodifiableList(characters);
+        Collections.sort(characters);
+        return characters;
     }
 }

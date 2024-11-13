@@ -4,6 +4,7 @@ import java.util.*;
 public class MovieCollection extends MonsterMovie {
     public final List<MonsterMovie> movies;
     private final Map<Integer, List<MonsterMovie>> moviesByYear;
+    Scanner scanner = new Scanner(System.in);
 
     public MovieCollection() {
         this.movies = new ArrayList<>();
@@ -23,8 +24,6 @@ public class MovieCollection extends MonsterMovie {
     }
 
     public void addCharacterToMovie() {
-        Scanner scanner = new Scanner(System.in);
-
         try {
             System.out.print("Enter movie title you want the new character in: ");
             String enteredTitle = scanner.nextLine();
@@ -66,7 +65,7 @@ public class MovieCollection extends MonsterMovie {
             }
         } catch (InputMismatchException e) {
             System.err.println("Invalid input format. Please enter numbers where required.");
-            scanner.nextLine(); // Clear invalid input
+            scanner.nextLine();
         } catch (Exception e) {
             System.err.println("An unexpected error occurred while adding characters: " + e.getMessage());
             e.printStackTrace();
@@ -74,10 +73,8 @@ public class MovieCollection extends MonsterMovie {
     }
 
     public void addMovieFromUserInput() {
-        Scanner scanner = new Scanner(System.in);
-
         try {
-            System.out.println("Enter the number of movies: ");
+            System.out.print("Enter the number of movies: ");
             int numberOfMovies = scanner.nextInt();
             scanner.nextLine();
 
@@ -103,13 +100,19 @@ public class MovieCollection extends MonsterMovie {
     }
 
     public void displayAllMovies() {
-        if (movies.isEmpty()) {
-            System.out.println("No movies in the collection.\n");
-            return;
+        try {
+            if (movies.isEmpty()) {
+                System.out.println("No movies in the collection.\n");
+                return;
+            }
+            System.out.println("Movies in the Collection:");
+            for (MonsterMovie movie : movies) {
+                System.out.println("Title: " + movie.getTitle() + " || Year Released: " + movie.getYearReleased());
+            }
         }
-        System.out.println("Movies in the Collection:");
-        for (MonsterMovie movie : movies) {
-            System.out.println("Title: " + movie.getTitle() + " || Year Released: " + movie.getYearReleased());
+        catch (Exception e) {
+            System.err.println("An error occurred while displaying movies: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 
@@ -126,24 +129,49 @@ public class MovieCollection extends MonsterMovie {
         }
     }
 
-    public void removeMovieByTitle(String newTitle) {
-        if (newTitle.isEmpty()) {
-            System.err.println("Error: Title cannot be null or empty.");
-            return;
-        }
-        movies.removeIf(movie -> movie.getTitle().contains(newTitle));
-    }
-
-    public void removeMovieByYear(int newYearReleased) {
-        movies.removeIf(movie -> movie.getYearReleased() == newYearReleased);
-    }
-
-    public void removeMovieByCharacter(String newName) {
-        if (newName.isEmpty()) {
-            System.err.println("Error: Character name cannot be null or empty.");
-            return;
-        }
+    public void removeMovieByTitle() {
         try {
+            System.out.print("Enter the movie name you want to delete: ");
+            String newTitle = scanner.nextLine();
+            movies.removeIf(movie -> movie.getTitle().contains(newTitle));
+            if (newTitle.isEmpty()) {
+                System.err.println("Error: Title cannot be null or empty.");
+            }
+        }
+        catch(InputMismatchException e){
+            System.err.println("Invalid input format. Please enter numbers where required.");
+            scanner.nextLine();
+        }
+        catch (Exception e) {
+            System.err.println("An error occurred while removing movie: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    public void removeMovieByYear() {
+        try {
+            System.out.println("Enter a year to delete the movies made in that year:");
+            int newYearReleased = scanner.nextInt();
+            movies.removeIf(movie -> movie.getYearReleased() == newYearReleased);
+        }
+        catch(InputMismatchException e){
+            System.err.println("Invalid input format. Please enter numbers where required.");
+            scanner.nextLine();
+        }
+        catch (Exception e) {
+            System.err.println("An error occurred while removing movie: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    public void removeMovieByCharacter() {
+        try {
+            System.out.print("Enter the character name to delete the movies that contain: ");
+            String characterName = scanner.next();
+            movies.removeIf(movie -> {
+                return movie.getHorrorCharacters().removeIf(character -> character.getName().equals(characterName));
+            });
+            /*
                for(MonsterMovie movie : movies) {
                    for(HorrorCharacter character : movie.getHorrorCharacters()){
                        if(character.getName().equals(newName)){
@@ -152,8 +180,43 @@ public class MovieCollection extends MonsterMovie {
                        }
                    }
                }
-        } catch (Exception e) {
+             */
+            if(characterName.isEmpty()) {
+                System.err.println("Error: Character name cannot be null/empty.");
+            }
+        }
+        catch(InputMismatchException e){
+            System.err.println("Invalid input format. Please enter numbers where required.");
+            scanner.nextLine();
+        }
+        catch (Exception e) {
             System.err.println("An error occurred while removing movies by character: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    public void removeCharacterInAMovie() {
+        try {
+            System.out.print("Enter movie title: ");
+            String enteredTitle = scanner.nextLine();
+            for (MonsterMovie movie : movies) {
+                if (movie.getTitle().equalsIgnoreCase(enteredTitle)) {
+                    System.out.print("Enter the character name to delete character: ");
+                    String name = scanner.nextLine();
+                    for (HorrorCharacter character : movie.getHorrorCharacters()) {
+                        if (character.getName().equals(name)) {
+                            movie.removeCharacter(character);
+                        }
+                    }
+                }
+            }
+        }
+        catch(InputMismatchException e){
+            System.err.println("Invalid input format. Please enter numbers where required.");
+            scanner.nextLine();
+        }
+        catch (Exception e) {
+            System.err.println("An error occurred while removing character in movie: " + e.getMessage());
             e.printStackTrace();
         }
     }
@@ -170,7 +233,12 @@ public class MovieCollection extends MonsterMovie {
                 bufferedWriter.append("\n");
             }
 
-        } catch (IOException e) {
+        }
+        catch(InputMismatchException e){
+            System.err.println("Invalid input format. Please enter numbers where required.");
+            scanner.nextLine();
+        }
+        catch (IOException e) {
             System.err.println("Error saving movie collection to file: " + e.getMessage());
             throw e;
         }
@@ -194,23 +262,35 @@ public class MovieCollection extends MonsterMovie {
                     String vulnerability = objects[6];
 
                     MonsterMovie movie = findOrCreateMovie(title, yearReleased);
-                    movie.addCharacter(new HorrorCharacter(name, age, subtype, rebirth, vulnerability));
+                    Objects.requireNonNull(movie).addCharacter(new HorrorCharacter(name, age, subtype, rebirth, vulnerability));
                 }
             }
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             System.err.println("Error reading from file: " + e.getMessage());
             throw e;
         }
     }
 
     private MonsterMovie findOrCreateMovie(String title, int yearReleased) {
-        for (MonsterMovie movie : movies) {
-            if (movie.getTitle().equalsIgnoreCase(title)) {
-                return movie;
+        try {
+            for (MonsterMovie movie : movies) {
+                if (movie.getTitle().equalsIgnoreCase(title)) {
+                    return movie;
+                }
             }
+            MonsterMovie newMovie = new MonsterMovie(title, yearReleased);
+            addMovie(newMovie);
+            return newMovie;
         }
-        MonsterMovie newMovie = new MonsterMovie(title, yearReleased);
-        addMovie(newMovie);
-        return newMovie;
+        catch(InputMismatchException e){
+            System.err.println("Invalid input format. Please enter numbers where required.");
+            scanner.nextLine();
+        }
+        catch (Exception e) {
+            System.err.println("An error occurred while adding movie: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return null;
     }
 }
