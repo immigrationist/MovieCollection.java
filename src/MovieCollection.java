@@ -99,7 +99,29 @@ public class MovieCollection extends MonsterMovie {
         }
     }
 
-    public void displayAllMovies() {
+    public void displayAllMoviesWithCharacters() {
+        try {
+            if (movies.isEmpty()) {
+                System.out.println("No movies in the collection.\n");
+                return;
+            }
+            System.out.println("Movies in the Collection:");
+            for (MonsterMovie movie : movies) {
+                System.out.println("Title: " + movie.getTitle() + " || Year Released: " + movie.getYearReleased());
+            }
+            for (MonsterMovie movie : movies) {
+                movie.sortedCharacters();
+                movie.displayCharacterTypeCount();
+                movie.displayMostCommonVulnerability();
+            }
+        }
+        catch (Exception e) {
+            System.err.println("An error occurred while displaying movies: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    public void displayMovies(){
         try {
             if (movies.isEmpty()) {
                 System.out.println("No movies in the collection.\n");
