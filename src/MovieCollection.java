@@ -23,11 +23,8 @@ public class MovieCollection extends MonsterMovie {
         moviesByYear.get(year).add(movie);
     }
 
-    public void addCharacterToMovie() {
+    public void addCharacterToMovie(String enteredTitle) {
         try {
-            System.out.print("Enter movie title you want the new character in: ");
-            String enteredTitle = scanner.nextLine();
-
             System.out.print("Enter the number of horror characters: ");
             int numCharacters = scanner.nextInt();
             scanner.nextLine();
@@ -140,10 +137,8 @@ public class MovieCollection extends MonsterMovie {
 
     public void displayCharacters() {
         try {
-            for (MonsterMovie movie : movies) {
-                movie.displayCharactersInMovie();
-                movie.displayCharacterTypeCount();
-                movie.displayMostCommonVulnerability();
+            for(MonsterMovie movie : movies) {
+                movie.sortedCharacters();
             }
         } catch (Exception e) {
             System.err.println("An error occurred while displaying characters: " + e.getMessage());
@@ -151,14 +146,13 @@ public class MovieCollection extends MonsterMovie {
         }
     }
 
-    public void removeMovieByTitle() {
+    public void removeMovieByTitle(String enteredTitle) {
         try {
-            System.out.print("Enter the movie name you want to delete: ");
-            String newTitle = scanner.nextLine();
-            movies.removeIf(movie -> movie.getTitle().contains(newTitle));
-            if (newTitle.isEmpty()) {
+
+            if (enteredTitle.isEmpty()) {
                 System.err.println("Error: Title cannot be null or empty.");
             }
+            else movies.removeIf(movie -> movie.getTitle().contains(enteredTitle));
         }
         catch(InputMismatchException e){
             System.err.println("Invalid input format. Please enter numbers where required.");
@@ -170,11 +164,9 @@ public class MovieCollection extends MonsterMovie {
         }
     }
 
-    public void removeMovieByYear() {
+    public void removeMovieByYear(int enteredYear) {
         try {
-            System.out.println("Enter a year to delete the movies made in that year:");
-            int newYearReleased = scanner.nextInt();
-            movies.removeIf(movie -> movie.getYearReleased() == newYearReleased);
+            movies.removeIf(movie -> movie.getYearReleased() == enteredYear);
         }
         catch(InputMismatchException e){
             System.err.println("Invalid input format. Please enter numbers where required.");
@@ -186,13 +178,16 @@ public class MovieCollection extends MonsterMovie {
         }
     }
 
-    public void removeMovieByCharacter() {
+    public void removeMovieByCharacter(String enteredCharacter) {
         try {
-            System.out.print("Enter the character name to delete the movies that contain: ");
-            String characterName = scanner.next();
-            movies.removeIf(movie -> {
-                return movie.getHorrorCharacters().removeIf(character -> character.getName().equals(characterName));
-            });
+            if(enteredCharacter.isEmpty()) {
+                System.err.println("Error: Character name cannot be null/empty.");
+            }
+            else {
+                movies.removeIf(movie -> {
+                    return movie.getHorrorCharacters().removeIf(character -> character.getName().equals(enteredCharacter));
+                });
+            }
             /*
                for(MonsterMovie movie : movies) {
                    for(HorrorCharacter character : movie.getHorrorCharacters()){
@@ -203,9 +198,6 @@ public class MovieCollection extends MonsterMovie {
                    }
                }
              */
-            if(characterName.isEmpty()) {
-                System.err.println("Error: Character name cannot be null/empty.");
-            }
         }
         catch(InputMismatchException e){
             System.err.println("Invalid input format. Please enter numbers where required.");
@@ -217,20 +209,23 @@ public class MovieCollection extends MonsterMovie {
         }
     }
 
-    public void removeCharacterInAMovie() {
+
+    public void removeCharacterInAMovie(String enteredTitle) {
         try {
-            System.out.print("Enter movie title: ");
-            String enteredTitle = scanner.nextLine();
             for (MonsterMovie movie : movies) {
-                if (movie.getTitle().equalsIgnoreCase(enteredTitle)) {
-                    System.out.print("Enter the character name to delete character: ");
-                    String name = scanner.nextLine();
-                    for (HorrorCharacter character : movie.getHorrorCharacters()) {
-                        if (character.getName().equals(name)) {
-                            movie.removeCharacter(character);
+                if(!movie.getTitle().isEmpty()) {
+                    movie.sortedCharacters();
+                    if (movie.getTitle().equalsIgnoreCase(enteredTitle)) {
+                        System.out.print("Enter the character name to delete character: ");
+                        String name = scanner.nextLine();
+                        for (HorrorCharacter character : movie.getHorrorCharacters()) {
+                            if (character.getName().equals(name)) {
+                                movie.removeCharacter(character);
+                            }
                         }
                     }
                 }
+                else System.out.println("Error: Movie name cannot be null/empty.");
             }
         }
         catch(InputMismatchException e){
