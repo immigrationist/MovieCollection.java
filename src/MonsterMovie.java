@@ -55,11 +55,6 @@ public class MonsterMovie {
         }
         try{
             characters.remove(character);
-            characters.remove(character.getAge());
-            characters.remove(character.getRebirth());
-            characters.remove(character.getRebirth());
-            characters.remove(character.getVulnerability());
-
         }
         catch(Exception e){
             System.err.println("An error occurred while removing the character: " + e.getMessage());
@@ -67,7 +62,7 @@ public class MonsterMovie {
         }
     }
 
-    public void displayCharactersInMovie() {
+    public void sortedCharacters() {
         try {
             Collections.sort(characters);
             System.out.println("\nSorted Horror Characters in Movie: " + title);
