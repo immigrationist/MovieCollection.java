@@ -1,8 +1,11 @@
 import java.io.*;
 import java.util.*;
 
-public class MovieCollection extends MonsterMovie {
+public class MovieCollection{
+    // composition instead of inheritance, getting a list of movies from MonsterMovie
     public final List<MonsterMovie> movies;
+    // composition "has-a" relationship
+    // moviesByYear is an instance of Map<Integer, List<MonsterMovie>>
     private final Map<Integer, List<MonsterMovie>> moviesByYear;
     Scanner scanner = new Scanner(System.in);
 
@@ -11,12 +14,26 @@ public class MovieCollection extends MonsterMovie {
         this.moviesByYear = new HashMap<>();
     }
 
+    public void getMoviesByYear(int year) {
+        moviesByYear.put(year, new ArrayList<>());
+        boolean movieFound = false;
+        System.out.println("\nMovies in the Collection:");
+        for (MonsterMovie movie : movies) {
+            if (movie.getYearReleased() == year) {
+                System.out.println("Title: " + movie.getTitle() + " || Year Released: " + movie.getYearReleased());
+                movieFound = true;
+            }
+        }
+        if (!movieFound) {
+            System.out.println("Movie with year \"" + year + "\" not found.");
+        }
+    }
+
     public void addMovie(MonsterMovie movie) {
         if (movie == null) {
             System.err.println("Error: Cannot add a null movie.");
             return;
         }
-
         movies.add(movie);
         int year = movie.getYearReleased();
         moviesByYear.putIfAbsent(year, new ArrayList<>());
@@ -47,7 +64,7 @@ public class MovieCollection extends MonsterMovie {
 
                         System.out.print("Rebirth year: ");
                         int rebirth = scanner.nextInt();
-                        scanner.nextLine(); // Consume the newline character
+                        scanner.nextLine();
 
                         System.out.print("Vulnerability: ");
                         String vulnerability = scanner.nextLine();
@@ -89,31 +106,9 @@ public class MovieCollection extends MonsterMovie {
             }
         } catch (InputMismatchException e) {
             System.err.println("Invalid input format. Please enter numbers where required.");
-            scanner.nextLine(); // Clear invalid input
+            scanner.nextLine();
         } catch (Exception e) {
             System.err.println("An unexpected error occurred while adding movies: " + e.getMessage());
-            e.printStackTrace();
-        }
-    }
-
-    public void displayAllMoviesWithCharacters() {
-        try {
-            if (movies.isEmpty()) {
-                System.out.println("No movies in the collection.\n");
-                return;
-            }
-            System.out.println("Movies in the Collection:");
-            for (MonsterMovie movie : movies) {
-                System.out.println("Title: " + movie.getTitle() + " || Year Released: " + movie.getYearReleased());
-            }
-            for (MonsterMovie movie : movies) {
-                movie.sortedCharacters();
-                movie.displayCharacterTypeCount();
-                movie.displayMostCommonVulnerability();
-            }
-        }
-        catch (Exception e) {
-            System.err.println("An error occurred while displaying movies: " + e.getMessage());
             e.printStackTrace();
         }
     }
@@ -128,8 +123,7 @@ public class MovieCollection extends MonsterMovie {
             for (MonsterMovie movie : movies) {
                 System.out.println("Title: " + movie.getTitle() + " || Year Released: " + movie.getYearReleased());
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             System.err.println("An error occurred while displaying movies: " + e.getMessage());
             e.printStackTrace();
         }
@@ -139,6 +133,8 @@ public class MovieCollection extends MonsterMovie {
         try {
             for(MonsterMovie movie : movies) {
                 movie.sortedCharacters();
+                movie.displayCharacterTypeCount();
+                movie.displayMostCommonVulnerability();
             }
         } catch (Exception e) {
             System.err.println("An error occurred while displaying characters: " + e.getMessage());
@@ -153,12 +149,7 @@ public class MovieCollection extends MonsterMovie {
                 System.err.println("Error: Title cannot be null or empty.");
             }
             else movies.removeIf(movie -> movie.getTitle().contains(enteredTitle));
-        }
-        catch(InputMismatchException e){
-            System.err.println("Invalid input format. Please enter numbers where required.");
-            scanner.nextLine();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             System.err.println("An error occurred while removing movie: " + e.getMessage());
             e.printStackTrace();
         }
@@ -167,12 +158,10 @@ public class MovieCollection extends MonsterMovie {
     public void removeMovieByYear(int enteredYear) {
         try {
             movies.removeIf(movie -> movie.getYearReleased() == enteredYear);
-        }
-        catch(InputMismatchException e){
+        } catch(InputMismatchException e){
             System.err.println("Invalid input format. Please enter numbers where required.");
             scanner.nextLine();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             System.err.println("An error occurred while removing movie: " + e.getMessage());
             e.printStackTrace();
         }
@@ -185,7 +174,8 @@ public class MovieCollection extends MonsterMovie {
             }
             else {
                 movies.removeIf(movie -> {
-                    return movie.getHorrorCharacters().removeIf(character -> character.getName().equals(enteredCharacter));
+                    return movie.getHorrorCharacters().removeIf(character ->
+                            character.getName().equalsIgnoreCase(enteredCharacter));
                 });
             }
             /*
@@ -198,12 +188,7 @@ public class MovieCollection extends MonsterMovie {
                    }
                }
              */
-        }
-        catch(InputMismatchException e){
-            System.err.println("Invalid input format. Please enter numbers where required.");
-            scanner.nextLine();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             System.err.println("An error occurred while removing movies by character: " + e.getMessage());
             e.printStackTrace();
         }
@@ -219,20 +204,14 @@ public class MovieCollection extends MonsterMovie {
                         System.out.print("Enter the character name to delete character: ");
                         String name = scanner.nextLine();
                         for (HorrorCharacter character : movie.getHorrorCharacters()) {
-                            if (character.getName().equals(name)) {
+                            if (character.getName().equalsIgnoreCase(name)) {
                                 movie.removeCharacter(character);
                             }
                         }
                     }
-                }
-                else System.out.println("Error: Movie name cannot be null/empty.");
+                } else System.out.println("Error: Movie name cannot be null/empty.");
             }
-        }
-        catch(InputMismatchException e){
-            System.err.println("Invalid input format. Please enter numbers where required.");
-            scanner.nextLine();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             System.err.println("An error occurred while removing character in movie: " + e.getMessage());
             e.printStackTrace();
         }
@@ -249,13 +228,7 @@ public class MovieCollection extends MonsterMovie {
                 }
                 bufferedWriter.append("\n");
             }
-
-        }
-        catch(InputMismatchException e){
-            System.err.println("Invalid input format. Please enter numbers where required.");
-            scanner.nextLine();
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             System.err.println("Error saving movie collection to file: " + e.getMessage());
             throw e;
         }
@@ -282,8 +255,7 @@ public class MovieCollection extends MonsterMovie {
                     Objects.requireNonNull(movie).addCharacter(new HorrorCharacter(name, age, subtype, rebirth, vulnerability));
                 }
             }
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             System.err.println("Error reading from file: " + e.getMessage());
             throw e;
         }
@@ -299,12 +271,7 @@ public class MovieCollection extends MonsterMovie {
             MonsterMovie newMovie = new MonsterMovie(title, yearReleased);
             addMovie(newMovie);
             return newMovie;
-        }
-        catch(InputMismatchException e){
-            System.err.println("Invalid input format. Please enter numbers where required.");
-            scanner.nextLine();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             System.err.println("An error occurred while adding movie: " + e.getMessage());
             e.printStackTrace();
         }

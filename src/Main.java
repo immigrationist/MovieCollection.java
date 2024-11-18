@@ -17,7 +17,7 @@ public class Main {
             e.printStackTrace();
         }
 
-        while (choice != 10) {
+        while (choice != 11) {
             System.out.println("""
                     \nChoose from the options below\
                     
@@ -31,13 +31,13 @@ public class Main {
                     
                     5. Remove movie by character name\
                     
-                    6. Display all movies with characters\
+                    6. Remove character inside a movie\
                     
-                    7. Remove character inside a movie\
+                    7. Display all movies\
                     
                     8. Display all characters\
                     
-                    9. Display all movies\
+                    9. Display movies by year\
                     
                     10. Save & Exit""");
             try {
@@ -47,7 +47,7 @@ public class Main {
                 switch (choice) {
                     case 1:
                         collection.addMovieFromUserInput();
-                        collection.displayAllMoviesWithCharacters();
+                        collection.displayMovies();
                         break;
                     case 2:
                         System.out.print("Enter movie title you want the new character in: ");
@@ -60,26 +60,23 @@ public class Main {
                         int enteredYear = scanner.nextInt();
                         collection.removeMovieByYear(enteredYear);
                         System.out.println("\nAfter removing movies from the year entered:");
-                        collection.displayAllMoviesWithCharacters();
+                        collection.displayMovies();
                         break;
                     case 4:
                         System.out.print("Enter the movie name you want to delete: ");
                         enteredTitle = scanner.nextLine();
                         collection.removeMovieByTitle(enteredTitle);
                         System.out.println("After removing movies from the title entered:");
-                        collection.displayAllMoviesWithCharacters();
+                        collection.displayMovies();
                         break;
                     case 5:
                         System.out.print("Enter the character name to delete the movies that contain: ");
                         String enteredCharacter = scanner.next();
                         collection.removeMovieByCharacter(enteredCharacter);
                         System.out.println("After removing movies from the character entered:");
-                        collection.displayAllMoviesWithCharacters();
+                        collection.displayMovies();
                         break;
                     case 6:
-                        collection.displayAllMoviesWithCharacters();
-                        break;
-                    case 7:
                         collection.displayMovies();
                         System.out.print("Enter movie title: ");
                         enteredTitle = scanner.nextLine();
@@ -87,11 +84,16 @@ public class Main {
                         System.out.println("After removing character from movie: ");
                         collection.displayCharacters();
                         break;
+                    case 7:
+                        collection.displayMovies();
+                        break;
                     case 8:
                         collection.displayCharacters();
                         break;
                     case 9:
-                        collection.displayMovies();
+                            System.out.println("Enter movie year: ");
+                            enteredYear = scanner.nextInt();
+                            collection.getMoviesByYear(enteredYear);
                         break;
                     case 10:
                         try {
@@ -104,13 +106,9 @@ public class Main {
                         System.exit(0);
                         break;
                     default:
-                        System.out.println("Invalid option. Please select a valid option (1-7).");
-                        break;
-
-
                 }
             } catch (InputMismatchException e) {
-                System.err.println("Invalid input. Please enter a number (1-7).");
+                System.err.println("Invalid input. Please enter a number (1-10).");
                 scanner.next();
             } catch (Exception e) {
                 System.err.println("An unexpected error occurred: " + e.getMessage());

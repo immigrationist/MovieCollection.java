@@ -16,12 +16,6 @@ public class MonsterMovie {
         this.commonVulnerabilities = new HashMap<>();
     }
 
-    public MonsterMovie() {
-        this.characters = new ArrayList<>();
-        this.subtypeCount = new HashMap<>();
-        this.commonVulnerabilities = new HashMap<>();
-    }
-
     public void addCharacter(HorrorCharacter character) {
         if (character == null) {
             System.err.println("Error: Null character cannot be added.");
@@ -65,7 +59,7 @@ public class MonsterMovie {
     public void sortedCharacters() {
         try {
             Collections.sort(characters);
-            System.out.println("\nSorted Horror Characters in Movie: " + title);
+            System.out.println("\nSorted Horror Characters in Movie: " + title.toUpperCase());
             for (HorrorCharacter character : characters) {
                 System.out.println(character);
             }
@@ -77,7 +71,7 @@ public class MonsterMovie {
 
     public void displayCharacterTypeCount() {
         try {
-            System.out.println("\nCharacter types and counts: ");
+            System.out.println("Character types and counts: ");
             for (Map.Entry<String, Integer> subtypeName : subtypeCount.entrySet()) {
                 System.out.println(subtypeName.getKey() + " " + subtypeName.getValue());
             }
