@@ -1,19 +1,30 @@
 import java.io.*;
 import java.util.*;
 
-public class MovieCollection{
-    // composition instead of inheritance, getting a list of movies from MonsterMovie
-    public final List<MonsterMovie> movies;
-    // composition "has-a" relationship
-    // moviesByYear is an instance of Map<Integer, List<MonsterMovie>>
-    private final Map<Integer, List<MonsterMovie>> moviesByYear;
-    Scanner scanner = new Scanner(System.in);
+/**
+ * MovieCollection is a class that manages a collection of MonsterMovie objects.
+ * It provides functionalities such as adding, removing, and displaying movies and their characters.
+ * Additionally, it allows saving and loading the collection to/from a file.
+ */
+public class MovieCollection {
+    // Composition instead of inheritance: a list of MonsterMovie objects
+    private final List<MonsterMovie> movies;
+    // "Has-a" relationship with a Map for storing movies by their release year
+    protected final Map<Integer, List<MonsterMovie>> moviesByYear;
+    private final Scanner scanner = new Scanner(System.in);
 
+    /**
+     * Constructor initializes the movie collection and the moviesByYear map.
+     */
     public MovieCollection() {
         this.movies = new ArrayList<>();
         this.moviesByYear = new HashMap<>();
     }
 
+    /**
+     * Displays movies from the collection released in a specified year.
+     * @param year the year of movies to retrieve
+     */
     public void getMoviesByYear(int year) {
         moviesByYear.put(year, new ArrayList<>());
         boolean movieFound = false;
@@ -29,17 +40,23 @@ public class MovieCollection{
         }
     }
 
+    /**
+     * Adds a MonsterMovie object to the collection.
+     * Adds a movie to the List of MonsterMovie.
+     * @param movie the MonsterMovie object to add
+     */
     public void addMovie(MonsterMovie movie) {
         if (movie == null) {
             System.err.println("Error: Cannot add a null movie.");
             return;
         }
         movies.add(movie);
-        int year = movie.getYearReleased();
-        moviesByYear.putIfAbsent(year, new ArrayList<>());
-        moviesByYear.get(year).add(movie);
     }
 
+    /**
+     * Adds characters to a specific movie in the collection.
+     * @param enteredTitle the title of the movie to which characters will be added
+     */
     public void addCharacterToMovie(String enteredTitle) {
         try {
             System.out.print("Enter the number of horror characters: ");
@@ -79,41 +96,15 @@ public class MovieCollection{
             }
         } catch (InputMismatchException e) {
             System.err.println("Invalid input format. Please enter numbers where required.");
-            scanner.nextLine();
         } catch (Exception e) {
-            System.err.println("An unexpected error occurred while adding characters: " + e.getMessage());
-            e.printStackTrace();
+            System.err.println("An unexpected error occurred while adding characters");
         }
     }
 
-    public void addMovieFromUserInput() {
-        try {
-            System.out.print("Enter the number of movies: ");
-            int numberOfMovies = scanner.nextInt();
-            scanner.nextLine();
-
-            for (int i = 0; i < numberOfMovies; i++) {
-                System.out.print("Enter movie title " + (i + 1) + ": ");
-                String title = scanner.nextLine();
-
-                System.out.print("Enter year released: ");
-                int yearReleased = scanner.nextInt();
-                scanner.nextLine();
-
-                MonsterMovie movie = new MonsterMovie(title, yearReleased);
-                addMovie(movie);
-                System.out.println("\nMovie added successfully!");
-            }
-        } catch (InputMismatchException e) {
-            System.err.println("Invalid input format. Please enter numbers where required.");
-            scanner.nextLine();
-        } catch (Exception e) {
-            System.err.println("An unexpected error occurred while adding movies: " + e.getMessage());
-            e.printStackTrace();
-        }
-    }
-
-    public void displayMovies(){
+    /**
+     * Displays all movies in the collection.
+     */
+    public void displayMovies() {
         try {
             if (movies.isEmpty()) {
                 System.out.println("No movies in the collection.\n");
@@ -124,11 +115,15 @@ public class MovieCollection{
                 System.out.println("Title: " + movie.getTitle() + " || Year Released: " + movie.getYearReleased());
             }
         } catch (Exception e) {
-            System.err.println("An error occurred while displaying movies: " + e.getMessage());
-            e.printStackTrace();
+            System.err.println("An error occurred while displaying movies");
         }
     }
 
+    /**
+     * Displays all characters in each movie.
+     * Displays character type count.
+     * Displays the most common vulnerability in the movie.
+     */
     public void displayCharacters() {
         try {
             for(MonsterMovie movie : movies) {
@@ -137,24 +132,31 @@ public class MovieCollection{
                 movie.displayMostCommonVulnerability();
             }
         } catch (Exception e) {
-            System.err.println("An error occurred while displaying characters: " + e.getMessage());
-            e.printStackTrace();
+            System.err.println("An error occurred while displaying characters");
         }
     }
 
+    /**
+     * Removes movies from the collection based on the title entered by the user.
+     * @param enteredTitle the title of the movie to remove
+     */
     public void removeMovieByTitle(String enteredTitle) {
         try {
-
             if (enteredTitle.isEmpty()) {
                 System.err.println("Error: Title cannot be null or empty.");
+            } else {
+                // movie is an instance of a Movie object, for each movie it checks if input matches title
+                movies.removeIf(movie -> movie.getTitle().equalsIgnoreCase(enteredTitle));
             }
-            else movies.removeIf(movie -> movie.getTitle().contains(enteredTitle));
         } catch (Exception e) {
-            System.err.println("An error occurred while removing movie: " + e.getMessage());
-            e.printStackTrace();
+            System.err.println("An error occurred while removing movie");
         }
     }
 
+    /**
+     * Removes movies from the collection based on the year entered by the user.
+     * @param enteredYear the year of the movies to remove
+     */
     public void removeMovieByYear(int enteredYear) {
         try {
             movies.removeIf(movie -> movie.getYearReleased() == enteredYear);
@@ -162,43 +164,36 @@ public class MovieCollection{
             System.err.println("Invalid input format. Please enter numbers where required.");
             scanner.nextLine();
         } catch (Exception e) {
-            System.err.println("An error occurred while removing movie: " + e.getMessage());
-            e.printStackTrace();
+            System.out.println("An error occurred while removing movie");
         }
     }
 
+    /**
+     * Removes movies from the collection based on a character's name.
+     * If a movie contains a character with the specified name, the movie is removed.
+     * @param enteredCharacter the name of the character used to remove movies
+     */
     public void removeMovieByCharacter(String enteredCharacter) {
         try {
             if(enteredCharacter.isEmpty()) {
                 System.err.println("Error: Character name cannot be null/empty.");
+            } else {
+                movies.removeIf(movie -> movie.getHorrorCharacters().removeIf(character ->
+                        character.getName().equalsIgnoreCase(enteredCharacter)));
             }
-            else {
-                movies.removeIf(movie -> {
-                    return movie.getHorrorCharacters().removeIf(character ->
-                            character.getName().equalsIgnoreCase(enteredCharacter));
-                });
-            }
-            /*
-               for(MonsterMovie movie : movies) {
-                   for(HorrorCharacter character : movie.getHorrorCharacters()){
-                       if(character.getName().equals(newName)){
-                           movies.remove(movie);
-                           removeMovieByCharacter(character.getName());
-                       }
-                   }
-               }
-             */
         } catch (Exception e) {
-            System.err.println("An error occurred while removing movies by character: " + e.getMessage());
-            e.printStackTrace();
+            System.err.println("An error occurred while removing movies by character");
         }
     }
 
-
+    /**
+     * Removes a specific character from a movie in the collection based on the movie title.
+     * @param enteredTitle the title of the movie containing the character to remove
+     */
     public void removeCharacterInAMovie(String enteredTitle) {
         try {
             for (MonsterMovie movie : movies) {
-                if(!movie.getTitle().isEmpty()) {
+                if (!movie.getTitle().isEmpty()) {
                     movie.sortedCharacters();
                     if (movie.getTitle().equalsIgnoreCase(enteredTitle)) {
                         System.out.print("Enter the character name to delete character: ");
@@ -209,31 +204,44 @@ public class MovieCollection{
                             }
                         }
                     }
-                } else System.out.println("Error: Movie name cannot be null/empty.");
+                } else {
+                    System.out.println("Error: Movie name cannot be null/empty.");
+                }
             }
         } catch (Exception e) {
-            System.err.println("An error occurred while removing character in movie: " + e.getMessage());
-            e.printStackTrace();
+            System.err.println("An error occurred while removing character in movie");
         }
     }
 
+    /**
+     * Saves the movie collection to a file.
+     * Each movie and its characters are saved in a specific format.
+     * @param fileName the name of the file to save the collection to
+     * @throws IOException if an I/O error occurs
+     */
     public void saveMovie(String fileName) throws IOException {
         try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(fileName))) {
             bufferedWriter.write("Title || Year Released || Name || Age || Subtype || Rebirth || Vulnerability\n\n");
             for (MonsterMovie movie : movies) {
                 for (HorrorCharacter character : movie.getHorrorCharacters()) {
-                    bufferedWriter.write(movie.getTitle() + " || " + movie.getYearReleased() + " || " + character.getName() + " || " + character.getAge() +
-                            " || " + character.getSubtype() + " || " + character.getRebirth() + " || " + character.getVulnerability());
+                    bufferedWriter.write(movie.getTitle() + " || " + movie.getYearReleased() + " || " +
+                            character.getName() + " || " + character.getAge() + " || " + character.getSubtype() +
+                            " || " + character.getRebirth() + " || " + character.getVulnerability());
                     bufferedWriter.append("\n");
                 }
                 bufferedWriter.append("\n");
             }
         } catch (IOException e) {
-            System.err.println("Error saving movie collection to file: " + e.getMessage());
-            throw e;
+            System.err.println("Error saving movie collection to file");
         }
     }
 
+    /**
+     * Reads the movie collection from a file and populates the current collection.
+     * The file must have a specific format for parsing the data.
+     * @param fileName the name of the file to read from
+     * @throws IOException if an I/O error occurs
+     */
     public void readFromFile(String fileName) throws IOException {
         try (BufferedReader bufferedReader = new BufferedReader(new FileReader(fileName))) {
             String line;
@@ -256,11 +264,16 @@ public class MovieCollection{
                 }
             }
         } catch (IOException e) {
-            System.err.println("Error reading from file: " + e.getMessage());
-            throw e;
+            System.err.println("Error reading from file");
         }
     }
 
+    /**
+     * Finds a movie in the collection by its title and year. If not found, creates a new movie.
+     * @param title the title of the movie
+     * @param yearReleased the release year of the movie
+     * @return the found MonsterMovie object from the file
+     */
     private MonsterMovie findOrCreateMovie(String title, int yearReleased) {
         try {
             for (MonsterMovie movie : movies) {
@@ -272,8 +285,7 @@ public class MovieCollection{
             addMovie(newMovie);
             return newMovie;
         } catch (Exception e) {
-            System.err.println("An error occurred while adding movie: " + e.getMessage());
-            e.printStackTrace();
+            System.out.println("Error");
         }
         return null;
     }
