@@ -151,11 +151,13 @@ public class Main {
                         Thread.sleep(3000);
                         break;
                     case 10:
-                        System.out.println("Enter movie title");
+                        collection.displayMovies();
+                        System.out.println("\nEnter movie title");
                         title = scanner.nextLine();
                         collection.editCharacterInAMovie(title);
                         break;
                     case 11:
+                        collection.displayMovies();
                         System.out.println("Enter movie title");
                         title = scanner.nextLine();
                         collection.editAMovie(title);

@@ -220,13 +220,14 @@ public class MovieCollection {
     public void editAMovie(String enteredTitle) {
         for(MonsterMovie movie : movies) {
             if(movie.getTitle().equalsIgnoreCase(enteredTitle)) {
-                System.out.println("\nEditing movie: " + movie.getTitle() + " || Year Released: " + movie.getYearReleased());
-                System.out.println("Enter new movie title to change title: ");
+                System.out.println("\nEditing movie: " + movie.getTitle().toUpperCase() + " || Year Released: " + movie.getYearReleased());
+                System.out.println("\nEnter new movie title to change title (press enter if you want no changes): ");
                 String newTitle = scanner.nextLine();
                 if(!newTitle.isEmpty()) {
                     movie.setTitle(newTitle);
                 }
-                System.out.println("Enter new movie year released to change year: ");
+                System.out.println("Enter new movie year released to change year " +
+                        "(movie year must be bigger than or equal to 1895): ");
                 int newYear = scanner.nextInt();
                 if(newYear >= 1895) {
                     movie.setYearReleased(newYear);
@@ -245,34 +246,34 @@ public class MovieCollection {
             if (!movie.getTitle().isEmpty()) {
                 if (movie.getTitle().equalsIgnoreCase(enteredTitle)) {
                     displaySpecificCharacter(enteredTitle);
-                    System.out.print("Enter the character name to edit character: ");
+                    System.out.print("Enter the character name to edit character (press enter if you want no changes): ");
                     String name = scanner.nextLine();
                     for (HorrorCharacter character : movie.getHorrorCharacters()) {
                         if (character.getName().equalsIgnoreCase(name)) {
                             System.out.println("\nEditing character: " + character.getName());
-                            System.out.println("Enter character name to change name: ");
+                            System.out.println("\nEnter character name to change name (press enter if you want no changes): ");
                             String newName = scanner.nextLine();
                             if(!newName.isEmpty()) {
                                 character.setName(newName);
                             }
-                            System.out.println("Enter character age to change age: ");
+                            System.out.println("Enter character age to change age (enter 0 for no changes): ");
                             int newAge = scanner.nextInt();
-                            if(newAge >= 0){
+                            if(newAge > 0){
                                 character.setAge(newAge);
                             }
                             scanner.nextLine();
-                            System.out.println("Enter character subtype to change subtype: ");
+                            System.out.println("Enter character subtype to change subtype (press enter if you want no changes): ");
                             String newSubtype = scanner.nextLine();
                             if(!newSubtype.isEmpty()) {
                                 character.setSubtype(newSubtype);
                             }
-                            System.out.println("Enter character rebirth to change rebirth: ");
+                            System.out.println("Enter character rebirth to change rebirth (rebirth must be bigger than or equal to 1800): ");
                             int newRebirth = scanner.nextInt();
-                            if(newRebirth >= 0) {
+                            if(newRebirth >= 1800) {
                                 character.setRebirth(newRebirth);
                             }
                             scanner.nextLine();
-                            System.out.println("Enter character vulnerability to change vulnerability: ");
+                            System.out.println("Enter character vulnerability to change vulnerability (press enter if you want no changes): ");
                             String newVulnerability = scanner.nextLine();
                             if(!newVulnerability.isEmpty()) {
                                 character.setVulnerability(newVulnerability);
