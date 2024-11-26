@@ -194,10 +194,10 @@ public class MovieCollection {
         try {
             for (MonsterMovie movie : movies) {
                 if (!movie.getTitle().isEmpty()) {
-                    movie.sortedCharacters();
                     if (movie.getTitle().equalsIgnoreCase(enteredTitle)) {
+                        displaySpecificCharacter(enteredTitle);
                         System.out.print("Enter the character name to delete character: ");
-                        String name = scanner.nextLine();
+                        String name = scanner.next();
                         for (HorrorCharacter character : movie.getHorrorCharacters()) {
                             if (character.getName().equalsIgnoreCase(name)) {
                                 movie.removeCharacter(character);
@@ -210,6 +210,92 @@ public class MovieCollection {
             }
         } catch (Exception e) {
             System.err.println("An error occurred while removing character in movie");
+        }
+    }
+
+    /**
+     * Edits a specific movie from a collection based on the movie title.
+     * @param enteredTitle the title of the movie
+     */
+    public void editAMovie(String enteredTitle) {
+        for(MonsterMovie movie : movies) {
+            if(movie.getTitle().equalsIgnoreCase(enteredTitle)) {
+                System.out.println("\nEditing movie: " + movie.getTitle() + " || Year Released: " + movie.getYearReleased());
+                System.out.println("Enter new movie title to change title: ");
+                String newTitle = scanner.nextLine();
+                if(!newTitle.isEmpty()) {
+                    movie.setTitle(newTitle);
+                }
+                System.out.println("Enter new movie year released to change year: ");
+                int newYear = scanner.nextInt();
+                if(newYear >= 1895) {
+                    movie.setYearReleased(newYear);
+                }
+                scanner.nextLine();
+            }
+        }
+    }
+
+    /**
+     * Edits a specific character from a movie in the collection based on the movie title.
+     * @param enteredTitle the title of the movie containing the character to edit
+     */
+    public void editCharacterInAMovie(String enteredTitle) {
+        for (MonsterMovie movie : movies) {
+            if (!movie.getTitle().isEmpty()) {
+                if (movie.getTitle().equalsIgnoreCase(enteredTitle)) {
+                    displaySpecificCharacter(enteredTitle);
+                    System.out.print("Enter the character name to edit character: ");
+                    String name = scanner.nextLine();
+                    for (HorrorCharacter character : movie.getHorrorCharacters()) {
+                        if (character.getName().equalsIgnoreCase(name)) {
+                            System.out.println("\nEditing character: " + character.getName());
+                            System.out.println("Enter character name to change name: ");
+                            String newName = scanner.nextLine();
+                            if(!newName.isEmpty()) {
+                                character.setName(newName);
+                            }
+                            System.out.println("Enter character age to change age: ");
+                            int newAge = scanner.nextInt();
+                            if(newAge >= 0){
+                                character.setAge(newAge);
+                            }
+                            scanner.nextLine();
+                            System.out.println("Enter character subtype to change subtype: ");
+                            String newSubtype = scanner.nextLine();
+                            if(!newSubtype.isEmpty()) {
+                                character.setSubtype(newSubtype);
+                            }
+                            System.out.println("Enter character rebirth to change rebirth: ");
+                            int newRebirth = scanner.nextInt();
+                            if(newRebirth >= 0) {
+                                character.setRebirth(newRebirth);
+                            }
+                            scanner.nextLine();
+                            System.out.println("Enter character vulnerability to change vulnerability: ");
+                            String newVulnerability = scanner.nextLine();
+                            if(!newVulnerability.isEmpty()) {
+                                character.setVulnerability(newVulnerability);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Displays a list of characters from a movie in the collection based on the movie title.
+     * @param newTitle the title of the movie containing the character(s)
+     */
+    public void displaySpecificCharacter(String newTitle){
+        System.out.println("\nSorted Horror Characters in Movie: " + newTitle.toUpperCase());
+        for(MonsterMovie movie : movies){
+            if(movie.getTitle().equalsIgnoreCase(newTitle)){
+                for(HorrorCharacter character : movie.getHorrorCharacters()){
+                    System.out.println(character);
+                }
+            }
         }
     }
 

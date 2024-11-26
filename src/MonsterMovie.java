@@ -10,12 +10,12 @@ public class MonsterMovie {
     /**
      * The title of the movie.
      */
-    private final String title;
+    private String title;
 
     /**
      * The year the movie was released.
      */
-    private final int yearReleased;
+    private int yearReleased;
 
     /**
      * The list of horror characters in the movie.
@@ -152,7 +152,6 @@ public class MonsterMovie {
 
     /**
      * Gets the title of the movie.
-     *
      * @return the title of the movie
      */
     public String getTitle() {
@@ -160,12 +159,27 @@ public class MonsterMovie {
     }
 
     /**
+     * Sets the title of the movie.
+     * @param title the movie title entered to set title
+     */
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    /**
      * Gets the year the movie was released.
-     *
      * @return the release year of the movie
      */
     public int getYearReleased() {
         return yearReleased;
+    }
+
+    /**
+     * Sets the year released of the movie.
+     * @param yearReleased the year released entered to set released year of the movie
+     */
+    public void setYearReleased(int yearReleased) {
+        this.yearReleased = yearReleased;
     }
 
     /**

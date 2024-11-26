@@ -20,6 +20,8 @@ public class Main {
      *     <li>Remove a character from a movie</li>
      *     <li>Display all movies or characters</li>
      *     <li>Display movies by year</li>
+     *     <li>Edit movie title and/or year</li>
+     *     <li>Edit a character from a movie</li>
      *     <li>Save the collection and exit</li>
      * </ul>
      * The program handles invalid inputs and ensures data persistence by reading from and saving to a file.
@@ -28,6 +30,7 @@ public class Main {
      */
     public static void main(String[] args) {
 
+        String title;
         MovieCollection collection = new MovieCollection();
         Scanner scanner = new Scanner(System.in);
         int choice = 0;
@@ -38,7 +41,7 @@ public class Main {
             System.err.println("Error reading from file");
         }
 
-        while (choice != 11) {
+        while (choice != 12) {
             System.out.println("""
                     \nChoose from the options below\
                     
@@ -60,7 +63,11 @@ public class Main {
                     
                     9. Display movies by year\
                     
-                    10. Save & Exit""");
+                    10. Edit a character in a movie\
+                    
+                    11. Edit a movie\
+                    
+                    12. Save & Exit""");
             try {
                 choice = scanner.nextInt();
                 scanner.nextLine();
@@ -73,7 +80,7 @@ public class Main {
 
                         for (int i = 0; i < numberOfMovies; i++) {
                             System.out.print("Enter movie title " + (i + 1) + ": ");
-                            String title = scanner.nextLine();
+                            title = scanner.nextLine();
 
                             System.out.print("Enter year released: ");
                             int yearReleased = scanner.nextInt();
@@ -122,9 +129,8 @@ public class Main {
                         collection.displayMovies();
                         System.out.print("Enter movie title: ");
                         // takes input to match a title of a movie
-                        collection.removeCharacterInAMovie(scanner.nextLine());
-                        System.out.println("After removing character from movie: ");
-                        collection.displayCharacters();
+                        title = scanner.nextLine();
+                        collection.removeCharacterInAMovie(title);
                         Thread.sleep(5000);
                         break;
                     case 7:
@@ -135,7 +141,7 @@ public class Main {
                     case 8:
                         // displays all characters with detail
                         collection.displayCharacters();
-                        Thread.sleep(5000);
+                        Thread.sleep(3000);
                         break;
                     case 9:
                         System.out.println("Enter movie year: ");
@@ -145,6 +151,16 @@ public class Main {
                         Thread.sleep(3000);
                         break;
                     case 10:
+                        System.out.println("Enter movie title");
+                        title = scanner.nextLine();
+                        collection.editCharacterInAMovie(title);
+                        break;
+                    case 11:
+                        System.out.println("Enter movie title");
+                        title = scanner.nextLine();
+                        collection.editAMovie(title);
+                        break;
+                    case 12:
                         try {
                             collection.saveMovie("/Users/berk/Documents/JAVA 2024/Assignment4/src/SavedMovie");
                         } catch (IOException e) {
