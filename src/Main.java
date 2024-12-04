@@ -41,9 +41,9 @@ public class Main {
             System.err.println("Error reading from file");
         }
 
-        while (choice != 12) {
+        while (choice != 13) {
             System.out.println("""
-                    \nChoose from the options below\
+                    \nChoose from the options below (enter a number from 1 to 13)\
                     
                     1. Create a new movie\
                     
@@ -63,11 +63,13 @@ public class Main {
                     
                     9. Display movies by year\
                     
-                    10. Edit a character in a movie\
+                    10. Display a specific movie with characters\
                     
-                    11. Edit a movie\
+                    11. Edit a character in a movie\
                     
-                    12. Save & Exit""");
+                    12. Edit a movie\
+                    
+                    13. Save & Exit""");
             try {
                 choice = scanner.nextInt();
                 scanner.nextLine();
@@ -151,18 +153,23 @@ public class Main {
                         Thread.sleep(3000);
                         break;
                     case 10:
+                        System.out.println("Enter movie title: ");
+                        collection.displaySpecificCharacter(scanner.nextLine());
+                        Thread.sleep(3000);
+                        break;
+                    case 11:
                         collection.displayMovies();
                         System.out.println("\nEnter movie title");
                         title = scanner.nextLine();
                         collection.editCharacterInAMovie(title);
                         break;
-                    case 11:
+                    case 12:
                         collection.displayMovies();
                         System.out.println("Enter movie title");
                         title = scanner.nextLine();
                         collection.editAMovie(title);
                         break;
-                    case 12:
+                    case 13:
                         try {
                             collection.saveMovie("/Users/berk/Documents/JAVA 2024/Assignment4/src/SavedMovie");
                         } catch (IOException e) {

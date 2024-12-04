@@ -7,10 +7,11 @@ import java.util.*;
  * Additionally, it allows saving and loading the collection to/from a file.
  */
 public class MovieCollection {
-    // Composition instead of inheritance: a list of MonsterMovie objects
+    // Composition instead of inheritance: a list of MonsterMovie objects "has-a relationship"
     private final List<MonsterMovie> movies;
-    // "Has-a" relationship with a Map for storing movies by their release year
-    protected final Map<Integer, List<MonsterMovie>> moviesByYear;
+    // aggregation (grouping), groups movies by their release year
+    // keys are release year (Integer), values are lists of MonsterMovie objects released in that year
+    private final Map<Integer, List<MonsterMovie>> moviesByYear;
     private final Scanner scanner = new Scanner(System.in);
 
     /**
@@ -19,25 +20,6 @@ public class MovieCollection {
     public MovieCollection() {
         this.movies = new ArrayList<>();
         this.moviesByYear = new HashMap<>();
-    }
-
-    /**
-     * Displays movies from the collection released in a specified year.
-     * @param year the year of movies to retrieve
-     */
-    public void getMoviesByYear(int year) {
-        moviesByYear.put(year, new ArrayList<>());
-        boolean movieFound = false;
-        System.out.println("\nMovies in the Collection:");
-        for (MonsterMovie movie : movies) {
-            if (movie.getYearReleased() == year) {
-                System.out.println("Title: " + movie.getTitle() + " || Year Released: " + movie.getYearReleased());
-                movieFound = true;
-            }
-        }
-        if (!movieFound) {
-            System.out.println("Movie with year \"" + year + "\" not found.");
-        }
     }
 
     /**
@@ -50,6 +32,9 @@ public class MovieCollection {
             System.err.println("Error: Cannot add a null movie.");
             return;
         }
+        int year = movie.getYearReleased();
+        moviesByYear.put(year, new ArrayList<>()); // Create a new list if the year doesn't exist
+        moviesByYear.get(year).add(movie);
         movies.add(movie);
     }
 
@@ -72,22 +57,25 @@ public class MovieCollection {
                         System.out.print("Name: ");
                         String name = scanner.nextLine();
 
-                        System.out.print("Age: ");
+                        System.out.print("Age (Must be bigger than 0): ");
                         int age = scanner.nextInt();
                         scanner.nextLine();
 
                         System.out.print("Subtype: ");
                         String subtype = scanner.nextLine();
 
-                        System.out.print("Rebirth year: ");
+                        System.out.print("Rebirth year (Must be bigger than or equal to 1800): ");
                         int rebirth = scanner.nextInt();
                         scanner.nextLine();
 
                         System.out.print("Vulnerability: ");
                         String vulnerability = scanner.nextLine();
 
-                        HorrorCharacter character = new HorrorCharacter(name, age, subtype, rebirth, vulnerability);
-                        m.addCharacter(character);
+                        if(rebirth >= 1800 && age > 0 && !name.isEmpty() && !subtype.isEmpty() && !vulnerability.isEmpty()) {
+                            HorrorCharacter character = new HorrorCharacter(name, age, subtype, rebirth, vulnerability);
+                            m.addCharacter(character);
+                        }
+                        else System.out.println("Error!!! Please be careful while adding a new character.");
                     }
                 }
             }
@@ -106,6 +94,11 @@ public class MovieCollection {
      */
     public void displayMovies() {
         try {
+                System.out.println("\nMovies in collection: ");
+                movies.stream()
+                        .map(movie -> "Title: " + movie.getTitle() + " || Year Released: " + movie.getYearReleased())
+                        .forEach(System.out::println);
+            /*
             if (movies.isEmpty()) {
                 System.out.println("No movies in the collection.\n");
                 return;
@@ -114,6 +107,7 @@ public class MovieCollection {
             for (MonsterMovie movie : movies) {
                 System.out.println("Title: " + movie.getTitle() + " || Year Released: " + movie.getYearReleased());
             }
+             */
         } catch (Exception e) {
             System.err.println("An error occurred while displaying movies");
         }
@@ -126,6 +120,17 @@ public class MovieCollection {
      */
     public void displayCharacters() {
         try {
+            /*
+            movies.forEach(movie -> {
+                System.out.println("\nCharacters in movie: " + movie.getTitle());
+                movie.getHorrorCharacters()
+                        .stream()
+                        .sorted(Comparator.comparing(HorrorCharacter::getName))
+                        .forEach(System.out::println);
+                movie.displayCharacterTypeCount();
+                movie.displayMostCommonVulnerability();
+            });
+             */
             for(MonsterMovie movie : movies) {
                 movie.sortedCharacters();
                 movie.displayCharacterTypeCount();
@@ -134,6 +139,28 @@ public class MovieCollection {
         } catch (Exception e) {
             System.err.println("An error occurred while displaying characters");
         }
+    }
+
+    /**
+     * Displays movies from the collection released in a specified year.
+     */
+    public void getMoviesByYear(int year) {
+        System.out.println("\nMovies in the Collection:");
+        movies.stream()
+                .filter(movies -> movies.getYearReleased() == year)
+                .map(movie -> "Title: " + movie.getTitle() + " || Year Released: " + movie.getYearReleased())
+                .forEach(System.out::println);
+        /*
+        for (MonsterMovie movie : movies) {
+            if (movie.getYearReleased() == year) {
+                System.out.println("Title: " + movie.getTitle() + " || Year Released: " + movie.getYearReleased());
+                movieFound = true;
+            }
+        }
+        if (!movieFound) {
+            System.out.println("Movie with year \"" + year + "\" not found.");
+        }
+         */
     }
 
     /**
@@ -159,6 +186,9 @@ public class MovieCollection {
      */
     public void removeMovieByYear(int enteredYear) {
         try {
+            System.out.println("Removed movies from year " + enteredYear);
+            // The code iterates through every movie in the movies list and removes all movies where the release year
+            // (movie.getYearReleased()) matches the enteredYear. The list is modified in-place during this process.
             movies.removeIf(movie -> movie.getYearReleased() == enteredYear);
         } catch(InputMismatchException e){
             System.err.println("Invalid input format. Please enter numbers where required.");
@@ -221,7 +251,7 @@ public class MovieCollection {
         for(MonsterMovie movie : movies) {
             if(movie.getTitle().equalsIgnoreCase(enteredTitle)) {
                 System.out.println("\nEditing movie: " + movie.getTitle().toUpperCase() + " || Year Released: " + movie.getYearReleased());
-                System.out.println("\nEnter new movie title to change title (press enter if you want no changes): ");
+                System.out.println("Enter new movie title to change title (press enter if you want no changes): ");
                 String newTitle = scanner.nextLine();
                 if(!newTitle.isEmpty()) {
                     movie.setTitle(newTitle);
@@ -251,7 +281,7 @@ public class MovieCollection {
                     for (HorrorCharacter character : movie.getHorrorCharacters()) {
                         if (character.getName().equalsIgnoreCase(name)) {
                             System.out.println("\nEditing character: " + character.getName());
-                            System.out.println("\nEnter character name to change name (press enter if you want no changes): ");
+                            System.out.println("Enter character name to change name (press enter if you want no changes): ");
                             String newName = scanner.nextLine();
                             if(!newName.isEmpty()) {
                                 character.setName(newName);
